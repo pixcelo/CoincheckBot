@@ -3,10 +3,9 @@ from pprint import pprint
 import requests
 
 BASE_URL = 'https://coincheck.com'
-url = BASE_URL + '/api/ticker'
+url = BASE_URL + '/api/trades'
 
-r = requests.get(url)
+r = requests.get(url, params={'pair': 'btc_jpy'})
 pprint(r.json())
-#  {'last': 2239853.0, 'bid': 2239604.0, 'ask': 2240041.0, 'high': 2245372.0, 'low': 2237000.0, 'volume': 364.79393303, 'timestamp': 1673127354}
 r = r.json()
-print('最新価格：', r['last'])
+print(r)

@@ -26,6 +26,8 @@ message = nonce + url + body
 signature = hmac.new(SECRET_KEY.encode(),
                      message.encode(),
                      hashlib.sha256).hexdigest()
+
+# リクエストヘッダー
 headers = {
     'ACCESS-KEY': ACCESS_KEY,
     'ACCESS-NONCE': nonce,

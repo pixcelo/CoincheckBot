@@ -6,7 +6,7 @@ BASE_URL = 'https://coincheck.com'
 url = BASE_URL + '/api/order_books'
 
 params = {
-    'limit': 10
+    'limit': 1
 }
 
 r = requests.get(url, params=params)

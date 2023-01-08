@@ -15,10 +15,17 @@ coincheck = Coincheck(access_key=ACCEES_KEY, secret_key=SECRET_KEY)
 
 interval = 1
 duration = 20
+AMOUNT = 0.005
 
 df = pd.DataFrame()
 while True:
     time.sleep(interval)
+    positions = coincheck.position
+
+    # 残高チェック
+    if not positions.get('jpy'):
+        raise
+
     df = df.append(
         {'price': coincheck.last}, ignore_index=True
     )
@@ -34,12 +41,40 @@ while True:
     df['+2σ'] = df['SMA'] + 2*df['std']
 
     # df['カラム名']iloc[-1] は最後の値を取得
-
     # logic
-    # -2σを割ったら買いを入れる
-    if df['price'].iloc[-1] < df['-2σ'].iloc[-1]:
-        print('buy!!!')
+    if 'btc' in positions.keys():
+        if df['+2σ'].iloc[-1] < df['price'].iloc[-1] \
+                and coincheck.ask_rate < df['price'].iloc[-1]:
+            params = {
+                'pair': 'btc_jpy',
+                'order_type': 'market_sell',
+                'amount': positions['btc']
+            }
+            r = coincheck.order(params)
+            print('exit', r)
+    else:
+        # もし-2σを割ったら
+        if df['price'].iloc[-1] < df['-2σ'].iloc[-1]:
+            market_buy_amount = coincheck.rate({'order_type': 'buy',
+                                                'pair': 'btc_jpy',
+                                                'amount': AMOUNT})
+            print('使用する日本円', market_buy_amount['price'])
+            params = {
+                'pair': 'btc_jpy',
+                'order_type': 'market_buy',
+                'market_buy_amount': market_buy_amount['price']
+            }
 
-    # +2σを超えたら売りを入れる
-    if df['+2σ'].iloc[-1] < df['price'].iloc[-1]:
-        print('sell!!!')
+            r = coincheck.order(params)
+            print('entry', r)
+
+        # もし+2σを割ったら
+        if df['+2σ'].iloc[-1] < df['price'].iloc[-1] \
+                and coincheck.ask_rate < df['price'].iloc[-1]:
+            params = {
+                'pair': 'btc_jpy',
+                'order_type': 'market_sell',
+                'amount': positions['btc']
+            }
+            r = coincheck.order(params)
+            print('exit', r)

@@ -14,6 +14,7 @@ class Coincheck(object):
 
     # 共通で使用するリクエスト関数
     def _request(self, endpoint, params=None, method='GET'):
+        time.sleep(1) 
         nonce = str(int(time.time()))
         body = json.dumps(params) if params else ''
 

@@ -65,3 +65,18 @@ class Coincheck(object):
     def order(self, params):
         endpoint = self.url + '/api/exchange/orders'
         return self._request(endpoint=endpoint, params=params, method='POST')
+
+    def transaction(self):
+        endpoint = self.url + '/api/exchange/orders/transactions'
+        return self._request(endpoint=endpoint)
+
+    @property
+    def ask_rate(self): # 直近の購入価格だけ取得する
+        transaction = self.transaction()
+        ask_transaction = [d for d in transaction['transactions']
+                           if d['side'] == 'buy']
+        return float(ask_transaction[0]['rate'])
+
+    def rate(self, params):
+        endpoint = self.url + '/api/exchange/orders/rate'
+        return self._request(endpoint=endpoint, params=params)

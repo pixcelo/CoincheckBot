@@ -5,6 +5,7 @@ import time
 
 import requests
 
+from utils.notify import send_message_to_line
 
 class Coincheck(object):
     def __init__(self, access_key, secret_key):
@@ -30,10 +31,14 @@ class Coincheck(object):
             'Content-Type': 'application/json'
         }
 
-        if method == 'GET':
-            r = requests.get(endpoint, headers=headers, params=params)
-        else:
-            r = requests.post(endpoint, headers=headers, data=body)
+        try:
+            if method == 'GET':
+                r = requests.get(endpoint, headers=headers, params=params)
+            else:
+                r = requests.post(endpoint, headers=headers, data=body)
+        except Exception as e:
+            send_message_to_line(e)
+            raise
 
         return r.json()
 

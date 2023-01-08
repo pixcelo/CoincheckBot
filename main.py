@@ -13,7 +13,7 @@ SECRET_KEY = conf['coincheck']['secret_key']
 
 coincheck = Coincheck(access_key=ACCEES_KEY, secret_key=SECRET_KEY)
 
-interval = 1
+interval = 1 # 1時間足であればinterval=60*60
 duration = 20
 AMOUNT = 0.005
 
@@ -84,3 +84,7 @@ while True:
             r = coincheck.order(params)
             send_message_to_line(r)
             print('exit', r)
+
+        
+        # スライスで不要になったデータをDataFrameから値を削除する
+        df = df.iloc[1:, :]

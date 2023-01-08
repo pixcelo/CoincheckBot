@@ -3,7 +3,7 @@ import time
 import pandas as pd
 
 from coincheck import Coincheck
-
+from utils.notify import send_message_to_line
 
 conf = configparser.ConfigParser()
 conf.read('config.ini')
@@ -18,12 +18,15 @@ duration = 20
 AMOUNT = 0.005
 
 df = pd.DataFrame()
+send_message_to_line('Start Auto Trading...')
+
 while True:
     time.sleep(interval)
     positions = coincheck.position
 
     # 残高チェック
     if not positions.get('jpy'):
+        send_message_to_line('The account balance is zero.')
         raise
 
     df = df.append(
@@ -51,6 +54,7 @@ while True:
                 'amount': positions['btc']
             }
             r = coincheck.order(params)
+            send_message_to_line(r)
             print('exit', r)
     else:
         # もし-2σを割ったら
@@ -66,6 +70,7 @@ while True:
             }
 
             r = coincheck.order(params)
+            send_message_to_line(r)
             print('entry', r)
 
         # もし+2σを割ったら
@@ -77,4 +82,5 @@ while True:
                 'amount': positions['btc']
             }
             r = coincheck.order(params)
+            send_message_to_line(r)
             print('exit', r)

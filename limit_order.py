@@ -44,3 +44,5 @@ r = requests.post(url, headers=headers, data=body)
 r = r.json()
 
 pprint(r)
+
+# https://coincheck.com/exchange/tradeview

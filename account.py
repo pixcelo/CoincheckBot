@@ -39,3 +39,5 @@ r = requests.get(url, headers=headers)
 r = r.json()
 
 pprint(r)
+# print('JPY: ', r['jpy'])
+# print('BTC: ', r['btc'])

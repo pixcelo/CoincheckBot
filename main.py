@@ -1,11 +1,13 @@
-from pprint import pprint
+import configparser
 
-import requests
+from coincheck import Coincheck
 
-BASE_URL = 'https://coincheck.com'
-url = BASE_URL + '/api/trades'
+conf = configparser.ConfigParser()
+conf.read('config.ini')
 
-r = requests.get(url, params={'pair': 'btc_jpy'})
-pprint(r.json())
-r = r.json()
-print(r)
+ACCESS_KEY = conf['coincheck']['access_key']
+SECRET_KEY = conf['coincheck']['secret_key']
+
+coincheck = Coincheck(ACCESS_KEY, SECRET_KEY)
+ticker = coincheck.ticker()
+print(ticker)
